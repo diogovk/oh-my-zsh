@@ -150,6 +150,23 @@ prompt_virtualenv() {
   fi
 }
 
+prompt_code_returns() {
+  local show_returns=''
+  local code_returns=''
+  for n in $pipestat ; do
+    [[ "0" != "$n" ]] && show_returns=y
+  done
+  if [ "$show_returns" ] ; then
+    for n in $pipestat ; do
+      if [[ "0" != "$n" ]] ; then
+        prompt_segment red white $n
+      else
+        prompt_segment black blue $n
+      fi
+    done
+  fi
+}
+
 # Status:
 # - was there an error
 # - am I root
@@ -176,4 +193,11 @@ build_prompt() {
   prompt_end
 }
 
+## Secondary prompt
+build_rprompt() {
+  pipestat=($pipestatus)
+  prompt_code_returns
+}
 PROMPT='%{%f%b%k%}$(build_prompt) '
+RPROMPT='%{%f%b%k%}$(build_rprompt) '
+
